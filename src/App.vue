@@ -31,7 +31,8 @@ body {
   }
 }
 
-a{
+* a{
   text-decoration: none;
+  color: @primary-color
 }
 </style>

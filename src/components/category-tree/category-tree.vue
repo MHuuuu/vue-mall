@@ -4,52 +4,59 @@
       <template v-for="item in list">
         <li
           :id="`category__item-${item.level}-${item.id}`"
-          class="category__item"
+          :class="`category__item${item.level && item.level===1?'':'--lesser'}`"
           :key="item.id"
-          @mouseenter="handleChangeDetail(`${item.level}-${item.id}`)"
-          @mouseleave="handleClodeDetail"
         >
+          <category-expand
+            v-if="item.level && item.level===1"
+            :class="`category__expand`"
+            :content="item.children"
+          ></category-expand>
+          <category-expand v-else :class="`category__expand`" :content="[item]"></category-expand>
           <a :href="item.link">{{item.label}}</a>
+          <template v-if="item.level && item.level===2">
+            <template v-for="cItem in item.children">
+              <a v-if="cItem.isHot" :key="cItem.id" :href="cItem.link">{{cItem.label}}</a>
+            </template>
+          </template>
         </li>
 
-        <template v-for="cItem in item.children">
+        <!-- <li :id="`category__item-${item.level}-${item.id}`" class="category__item" :key="item.id">
+          <category-expand class="category__expand" :content="item.children"></category-expand>
+          <a :href="item.link">{{item.label}}</a>
+        </li>-->
+
+        <!-- 扁平化问题 导致代码重复 待解决-->
+        <!-- <template v-for="cItem in item.children">
           <li
             :id="`category__item-${item.level}-${item.id}`"
             class="category__item--lesser"
             :key="cItem.id"
-            @mouseenter="handleChangeDetail(`${cItem.level}-${cItem.id}`)"
-            @mouseleave="handleClodeDetail"
           >
-            <transition name="el-fade-in">
-              <div
-                class="category__expand"
-                @mouseenter="handleKeepDetail"
-                @mouseleave="handleClodeDetail"
-              >{{text}}</div>
-            </transition>
+            <category-expand class="category__expand" :content="[cItem]"></category-expand>
             <a :href="cItem.link">{{cItem.label}}</a>
-            <a
-              v-for="ccItem in cItem.children"
-              :v-if="ccItem.isHot"
-              :key="ccItem.id"
-              :href="ccItem.link"
-            >{{ccItem.label}}</a>
+            <template v-for="ccItem in cItem.children">
+              <a v-if="ccItem.isHot" :key="ccItem.id" :href="ccItem.link">{{ccItem.label}}</a>
+            </template>
           </li>
-        </template>
+        </template>-->
       </template>
     </ul>
   </div>
 </template>
 
 <script>
+import CategoryExpand from './category-expand.vue'
+import { integrateJsonNested, sortDelayering } from '@/lib/util.js'
+import { nextTick } from 'q'
+
 export default {
   name: 'CategoryBody',
+  components: {
+    CategoryExpand
+  },
   data() {
-    return {
-      //isHide: false,
-      selectId: '-1',
-      text:"?"
-    }
+    return {}
   },
   props: {
     list: {
@@ -57,22 +64,15 @@ export default {
       default: () => []
     }
   },
-  methods: {
-    handleChangeDetail(id) {
-      this.text = id ? id : ''
-      //this.selectId = id ? id : ''
-      //this.isHide = true
-      //console.log(id)
-    },
-    //保持左栏的选中状态
-    handleKeepDetail() {
-      //const selectedItem = 'item-' + this.selectId
-      this.isHide = true
-    },
-    handleClodeDetail() {
-      //this.isHide = false
-    },
-    handleInterDetail() {}
+  computed: {
+    sortList() {}
+  },
+  mounted() {
+    /* setTimeout(() => {
+      this.$nextTick(() => {
+        console.log(this.list)
+      })
+    }, 2000) */
   }
 }
 </script>
@@ -88,6 +88,7 @@ export default {
   float: left;
 
   background-color: @category-bg-color;
+  opacity: 0.95;
   height: @default-height;
   border-top: 2px rgba(255, 0, 0, 0.5) solid;
   z-index: 10;
@@ -105,21 +106,22 @@ export default {
   -webkit-transition-duration: 0.2s;
   -webkit-transition-delay: 0.05s;
   -webkit-transition-timing-function: ease;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: normal;
+
   overflow: hidden;
   &:hover {
     background-color: @lesser-bg-color;
-    & a {
+    & > a {
       color: @primary-color;
     }
-
-    & .category__expand{
-      display:block;
+    & .category__expand {
+      display: block;
     }
   }
-
-  & a {
+  & > a {
     color: @unimportance-color;
     padding: 0px 3px;
     &:hover {
@@ -131,21 +133,22 @@ export default {
 //一阶继承二阶所有特性
 .category__item {
   .category__item--lesser;
-  font-weight: bold;
-  & a {
+  & > a {
+    font-weight: bold;
     color: @primary-color-white;
   }
 }
 
+//expand窗的基本信息
 .category__expand {
   height: @default-height;
+  color: @primary-color;
   width: 800px;
+  margin-left: 200px;
   position: absolute;
+  display: none;
   top: 0px;
   left: 0px;
-  margin-left: 200px;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: @primary-color;
-  display: none;
+  background-color: rgba(255, 255, 255,.9);
 }
 </style>

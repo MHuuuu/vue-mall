@@ -28,10 +28,13 @@ export default {
   },
   data() {
     return {
-      title: '商品分类'
     }
   },
   props: {
+    title:{
+      type:String,
+      default:'商品分类'
+    },
     MenuList: {
       type: Array,
       default: () => []
@@ -69,7 +72,7 @@ export default {
   width: @item-width;
   float: left;
   text-align: center;
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .menu-bar__item--title {

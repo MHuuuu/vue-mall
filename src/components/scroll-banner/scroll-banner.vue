@@ -1,8 +1,10 @@
 <template>
   <div class="scroll-banner">
     <el-carousel :height="`${height}px`" :arrow="arrow">
-      <el-carousel-item v-for="item in 4" :key="item">
-        <h3 >{{ item }}</h3>
+      <el-carousel-item v-for="item in imgList" :key="item.id">
+        <div class="layout--center">
+          <img :src="item.address">
+        </div>
       </el-carousel-item>
     </el-carousel>
   </div>
@@ -11,24 +13,33 @@
 export default {
   name: 'ScrollBanner',
   data() {
-    return {}
+    return {
+    }
   },
   props: {
     height: {
       type: Number,
       default: 450
     },
-    arrow:{
+    arrow: {
       type: String,
-      default: "never"
+      default: 'never'
+    },
+    imgList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  methods: {
+    completeAddress(old) {
+      return require(old);
     }
   }
 }
 </script>
 
 <style>
-
-.scroll-banner{
+.scroll-banner {
   z-index: 0;
 }
 .el-carousel__item:nth-child(2n) {

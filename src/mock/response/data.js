@@ -1,5 +1,6 @@
 import Mock from 'mockjs'
 import { doCustomTimes } from '@/lib/tools'
+import { type } from 'os'
 
 const Random = Mock.Random
 
@@ -54,10 +55,28 @@ export const getCategoryList3 = () => {
     'link': '@url',
     'rank|+1': 1,
     'parent_id|4-14': 0,
-    'isHot|1/5': true,
+    'isHot|1-5': true,
     'children': []
   }
-  doCustomTimes(20, () => {
+  doCustomTimes(100, () => {
+    arr.push(Mock.mock(template))
+  })
+  return arr
+}
+
+export const getTypeDetails = () => {
+  let type = 1
+  let arr = []
+  const template = {
+    'id|+1': 1,
+    'type|1-8': type,
+    'title': '@word',
+    'creat_time': '@datetime',
+    'link': '@url',
+    'price|1000-9999': 0,
+    'tags|3-7': '@cword'
+  }
+  doCustomTimes(100, () => {
     arr.push(Mock.mock(template))
   })
   return arr

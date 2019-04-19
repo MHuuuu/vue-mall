@@ -30,7 +30,7 @@ function addStyleResource (rule) {
     .loader('style-resources-loader')
     .options({
       patterns: [
-        path.resolve(__dirname, 'src/static/less/variables/*.less')
+        path.resolve(__dirname, 'static/less/variables/*.less')
       ]
     })
 }
